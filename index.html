@@ -1,0 +1,241 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <title>Inventory</title>
+</head>
+<body>
+      
+       
+              
+
+    <div class="container">
+       <div class="row">
+           <div class="col-lg-6" style="margin-top: 200px">
+               <canvas id="myChart"></canvas> 
+            </div>   
+            <div class="col-lg-6" style="margin-top: 200px">
+               <canvas id="myChart2"></canvas>          
+            </div>
+    </div></div>
+<script>
+
+
+
+const Url = "http://ec2-54-146-209-94.compute-1.amazonaws.com:3000/api/products/view/";
+const Url2 = "http://ec2-54-146-209-94.compute-1.amazonaws.com:3000/api/triputilization";
+window.setInterval(function(){
+    
+
+    const data = {}
+    $.ajax({
+        url:Url,
+        type:"POST",
+        data:data,
+        success:function(result){
+           
+            console.log(result)
+            let myChart = document.getElementById('myChart').getContext('2d');
+
+           
+
+  
+
+    Chart.defaults.global.defaultFontFamily = 'Lato';
+    Chart.defaults.global.defaultFontSize = 18;
+    Chart.defaults.global.defaultFontColor = '#777';
+    let massPopChart = new Chart(myChart, {
+    type:'bar',
+    data:{
+        labels:['Red','Green','Blue','Black','Yellow','White'],
+        datasets:[{
+            label:'Products',
+            data:[
+            result.products[0].qtyInStock,
+            result.products[1].qtyInStock,
+            result.products[2].qtyInStock,
+            result.products[3].qtyInStock,
+            result.products[4].qtyInStock,
+            result.products[5].qtyInStock
+            ],
+        
+            backgroundColor:[
+             'rgb(210, 50, 50, 0.6)',
+             'rgb(159, 214, 70,0.6)',
+            'rgb(51, 90, 219,0.6)',
+            'rgb(0, 0, 0,0.6)',
+            'rgb(242, 245, 34,0.6)',
+            'rgb(179, 183, 173,0.6)'
+            
+        ],
+        borderWidth:1,
+        borderColor:"#777",
+        hoverBorderWidth:3,
+        hoverBorderColor:"#000"  
+            }]
+        
+
+    },
+    options:{
+        animation:{
+            duration: 0
+        },
+        title:{
+            display:true,
+            text:'Live Inventory Status',
+            fontSize:25
+
+        },
+        legend:{
+            position:'right',
+            labels:{
+                fontColor:""
+            }
+        },
+        layout:{
+            padding:{
+                left:50,
+            right:0,
+            bottom:0,
+            top:0
+            }
+        }
+    }
+});
+
+        },
+        error:function(error){
+            console.log('Error ${error}')
+        }
+    })
+
+    
+    
+
+}, 1000);
+
+
+
+
+window.setInterval(function(){
+    
+
+    $.ajax({
+        url:Url2,
+        type:"GET",
+        success:function(result){
+           
+            console.log(result)
+            let myChart = document.getElementById('myChart2').getContext('2d');
+  
+
+    Chart.defaults.global.defaultFontFamily = 'Lato';
+    Chart.defaults.global.defaultFontSize = 18;
+    Chart.defaults.global.defaultFontColor = '#777';
+    let massPopChart = new Chart(myChart, {
+    type:'line',
+    data:{
+        labels:['1','2','3','4','5','6','7','8','9','10'],
+        datasets:[{
+            label:'OrderId',
+            data:[
+            result.utilization[0]*100,
+            result.utilization[1]*100,
+            result.utilization[2]*100,
+            result.utilization[3]*100,
+            result.utilization[4]*100,
+            result.utilization[5]*100,
+            result.utilization[6]*100,
+            result.utilization[7]*100,
+            result.utilization[8]*100,
+            result.utilization[9]*100,
+            ],
+        
+            backgroundColor:[
+             'rgb(210, 50, 50, 0.6)',
+             'rgb(159, 214, 70,0.6)',
+            'rgb(51, 90, 219,0.6)',
+            'rgb(0, 0, 0,0.6)',
+            'rgb(242, 245, 34,0.6)',
+            'rgb(179, 183, 173,0.6)'
+            
+        ],
+        borderWidth:1,
+        borderColor:"#777",
+        hoverBorderWidth:3,
+        hoverBorderColor:"#000"  
+            }]
+        
+
+    },
+   
+    options:{
+        scales: {
+            yAxes: [{
+                ticks: {
+                    suggestedMin: 0,
+                    suggestedMax: 100
+                },
+                scaleLabel: {
+        display: true,
+        labelString: 'Percentage Utilization'
+      }
+            }],
+            xAxes:[{
+                scaleLabel: {
+        display: true,
+        labelString: 'Last N trips'
+      }
+            }]
+        },
+        animation:{
+            duration: 0
+        },
+        title:{
+            display:true,
+            text:'Bot utilization chart',
+            fontSize:25
+
+        },
+        legend:{
+            position:'right',
+            labels:{
+                fontColor:""
+            }
+        },
+        layout:{
+            padding:{
+                left:50,
+            right:0,
+            bottom:0,
+            top:0
+            }
+        }
+    }
+});
+
+        },
+        error:function(error){
+            console.log('Error ${error}')
+        }
+    })
+
+    
+    
+
+}, 1000);
+
+
+
+
+
+</script>
+    
+</body>
+</html>
